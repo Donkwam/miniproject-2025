@@ -77,6 +77,10 @@ ERD
 1. Visual Studio 프로젝트 생성
 
 
+
+https://github.com/user-attachments/assets/5cb49388-d108-4728-9c9c-b8851eeda584
+
+
 ##### MQTT Subscriber
 - WPF 과목에서 사용했던 MQTT Subscriber 그대로 사용
 - WpfMqttSubApp 프로젝트 가져오기
