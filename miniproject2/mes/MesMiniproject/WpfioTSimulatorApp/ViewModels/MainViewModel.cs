@@ -36,5 +36,11 @@ namespace WpfIoTSimulatorApp.ViewModels
             ProductBrush = Brushes.Gray;
             StartHmiRequested?.Invoke(); // 컨베이어벨트 애니메이션 요청(View에서 처리)
         }
+
+        [RelayCommand]
+        public void Check()
+        {
+            StartSensorCheckRequested?.Invoke();
+        }
     }
 }
