@@ -109,7 +109,9 @@ ERD
 - 기본적인 DB관리 앱 + 실시간 공정 모니터링 + 리포트 시각화
 
 1. CommunityToolkit.Mvvm, MahApps.Metro 초기 설정
-
+2. MainView.xaml UI 디자인
+3. SettingView.xaml 생성
+4. Helpers.Common 클래스 정적 인스턴스 변수 작성
 
 #### 파이썬 AI + ASP.NET 연동
 - 참조소스
