@@ -71,7 +71,7 @@
                             Text="{Binding ModDt}"/>
 
                 <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="신규">
+                    <Button Content="신규" Margin="0,0,3,0" Command="{Binding NewCommand}">
                         <Button.ContentTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -82,7 +82,8 @@
                         </Button.ContentTemplate>
                     </Button>
 
-                    <Button Content="저장">
+                    
+                    <Button Content="저장" Margin="0,0,3,0" Command="{Binding SaveCommand}">
                         <Button.ContentTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -93,7 +94,8 @@
                         </Button.ContentTemplate>
                     </Button>
 
-                    <Button Content="삭제">
+
+                <Button Content="삭제" Command="{Binding RemoveCommand}">
                         <Button.ContentTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
