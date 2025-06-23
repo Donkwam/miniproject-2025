@@ -50,7 +50,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="{Binding}" Foreground="White" VerticalAlignment="Center"/>
-                                <iconPacks:PackIconVaadinIcons Kind="Cogs" Foreground="AntiqueWhite" />
+                                <iconPacks:PackIconModern Kind="Calendar" Foreground="AntiqueWhite" />
                             </StackPanel>
                         </DataTemplate>
                     </Button.ContentTemplate>
