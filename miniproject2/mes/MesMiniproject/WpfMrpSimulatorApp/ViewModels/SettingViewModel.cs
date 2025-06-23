@@ -2,12 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using MahApps.Metro.Controls.Dialogs;
 using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows;
 using WpfMrpSimulatorApp.Helpers;
 using WpfMrpSimulatorApp.Models;
 
@@ -68,9 +66,9 @@ namespace WpfMrpSimulatorApp.ViewModels
             set { 
                 SetProperty(ref _selectedSetting, value);
                 // 최초에 BasicCode에 값이 있는 상태만 수정상태
-                if (_selectedSetting != null) // 삭제 후에는 _selectedSetting자체가 null이 됨
+                if (_selectedSetting != null)  // 삭제 후에는 _selectedSetting자체가 null이 됨
                 {
-                    if (!string.IsNullOrEmpty(_selectedSetting.BasicCode)) // NullReferenceException 발생 가능
+                    if (!string.IsNullOrEmpty(_selectedSetting.BasicCode))  // NullReferenceException 발생 가능
                     {
                         CanSave = true;
                         CanRemove = true;
@@ -84,43 +82,45 @@ namespace WpfMrpSimulatorApp.ViewModels
         /// </summary>
         public string BasicCode {
             get => _basicCode;
-            set => SetProperty(ref _basicCode, value); 
+            set => SetProperty(ref _basicCode, value);
         }
+
         /// <summary>
         /// 코드명
         /// </summary>
-        public string CodeName { 
+        public string CodeName {
             get => _codeName; 
-            set => SetProperty(ref _codeName, value); 
+            set => SetProperty(ref _codeName, value);
         }
 
         /// <summary>
         /// 코드설명
         /// </summary>
-        public string? CodeDesc { 
-            get => _codeDesc; 
-            set => SetProperty(ref _codeDesc, value); 
+        public string? CodeDesc {
+            get => _codeDesc;
+            set => SetProperty(ref _codeDesc, value);
         }
 
-        public DateTime? RegDt { 
-            get => _regDt; 
-            set => SetProperty(ref _regDt, value); 
+        public DateTime? RegDt {
+            get => _regDt;
+            set => SetProperty(ref _regDt, value);
         }
 
-        public DateTime? ModDt { 
+        public DateTime? ModDt {
             get => _modDt;
-            set => SetProperty(ref _modDt, value); 
+            set => SetProperty(ref _modDt, value);
         }
+
         #endregion
         public SettingViewModel(IDialogCoordinator coordinator)
         {
-            this.dialogCoordinator = coordinator; // 파라미터값으로 초기화
+            this.dialogCoordinator = coordinator;  // 파라미터값으로 초기화
 
             LoadGridFromDb(); // DB에서 데이터로드해서 그리드에 출력
             IsUpdate = true;
 
-            // 최초에는 저장버튼, 삭제버튼이 비활성화
-            CanSave = CanRemove = false;
+            // 최초에는 저장버튼, 삭제버튼이 비활성화 
+            CanSave = CanRemove = false;            
         }
 
         private async Task LoadGridFromDb()
@@ -132,7 +132,7 @@ namespace WpfMrpSimulatorApp.ViewModels
                                       , codeDesc
                                       , regDt
                                       , modDt
-                                    FROM settings";
+                                   FROM settings";
                 ObservableCollection<Setting> settings = new ObservableCollection<Setting>();
 
                 // DB연동 방식 1
@@ -150,15 +150,14 @@ namespace WpfMrpSimulatorApp.ViewModels
                         var regDt = reader.GetDateTime("regDt");
                         // modDt는 최초에 입력후 항상 null. NULL타입 체크 필수
                         var modDt = reader.IsDBNull(reader.GetOrdinal("modDt")) ? (DateTime?)null : reader.GetDateTime("modDt");
-                        // ... 세개더
 
                         settings.Add(new Setting
                         {
                             BasicCode = basicCode,
                             CodeName = codeName,
                             CodeDesc = codeDesc,
-                            RegDt = null,
-                            ModDt = null,
+                            RegDt = regDt,
+                            ModDt = modDt,
                         });
                     }
                 }
@@ -170,15 +169,15 @@ namespace WpfMrpSimulatorApp.ViewModels
                 await this.dialogCoordinator.ShowMessageAsync(this, "오류", ex.Message);
             }
         }
+
         private void InitVariable()
         {
             SelectedSetting = new Setting();
-
             // IsUpdate가 False면 신규, True면 수정
             IsUpdate = false;
 
             CanSave = true;
-            CanRemove = false; // 이게 없으면 수정후 신규를 눌러도 활성화 되어 있음. 250623 12:31 수정
+            CanRemove = false;  // 이게 없으면 수정후 신규를 눌러도 활성화 되어 있음. 250623 12:31 hugo 수정
         }
 
         #region View 버튼클릭 메서드
@@ -187,9 +186,9 @@ namespace WpfMrpSimulatorApp.ViewModels
         public void NewData()
         {
             InitVariable();
-            IsUpdate = false; // DoybleCheck. 확실하게 동작을 하면 지워도 되는 로직
+            IsUpdate = false;  // DoubleCheck. 확실하게 동작을 하면 지워도 되는 로직
             CanSave = true; // 저장버튼 활성화
-        }
+        }        
 
         [RelayCommand]
         public async Task SaveData()
@@ -205,11 +204,13 @@ namespace WpfMrpSimulatorApp.ViewModels
 
                     if (IsUpdate)
                     {
-                        query = "UPDATE settings SET codeName = @codeName, codeDesc = @codeDesc, modDt = now() WHERE basicCode = @basicCode"; // UPDATE 쿼리
+                        query = @"UPDATE settings SET codeName = @codeName, codeDesc = @codeDesc, modDt = now() 
+                                   WHERE basicCode = @basicCode";  // UPDATE 쿼리
                     }
                     else
                     {
-                        query = "INSERT INTO settings (basicCode, codeName, codeDesc, regDt) VALUES (@basicCode, @codeName, @codeDesc, now());"; // INSERT 쿼리
+                        query = @"INSERT INTO settings (basicCode, codeName, codeDesc, regDt)
+                                   VALUES (@basicCode, @codeName, @codeDesc, now());"; // INSERT 쿼리
                     }
 
                     MySqlCommand cmd = new MySqlCommand(query, conn);
@@ -245,7 +246,7 @@ namespace WpfMrpSimulatorApp.ViewModels
 
             try
             {
-                string query = @"DELETE FROM settings WHERE basicCode = @basicCode";
+                string query = "DELETE FROM settings WHERE basicCode = @basicCode";
 
                 using (MySqlConnection conn = new MySqlConnection(Common.CONNSTR))
                 {
@@ -262,7 +263,7 @@ namespace WpfMrpSimulatorApp.ViewModels
                     }
                     else
                     {
-                        await this.dialogCoordinator.ShowMessageAsync(this, "기본설정 삭제", "데이터가 문제발생!!");
+                        await this.dialogCoordinator.ShowMessageAsync(this, "기본설정 삭제", "데이터가 삭제 문제발생!!");
                     }
                 }
             }
@@ -271,8 +272,8 @@ namespace WpfMrpSimulatorApp.ViewModels
                 await this.dialogCoordinator.ShowMessageAsync(this, "오류", ex.Message);
             }
 
-            LoadGridFromDb(); // DB를 다시 불러서 그리드를 재조회한다.
-            IsUpdate = true;
+            LoadGridFromDb();  // DB를 다시 불러서 그리드를 재조회한다.
+            IsUpdate = true;  // 다시 입력안되도록 막기
         }
 
         #endregion
