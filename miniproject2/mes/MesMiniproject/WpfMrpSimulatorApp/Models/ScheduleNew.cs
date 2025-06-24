@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.RightsManagement;
 
 namespace WpfMrpSimulatorApp.Models;
 
-public partial class Schedule
+public partial class ScheduleNew
 {
+    /// <summary>
+    /// 공정계획 순번(자동증가)
+    /// </summary>
     public int SchIdx { get; set; }
 
     /// <summary>
-    /// 동작코드
+    /// 공장코드
     /// </summary>
     public string PlantCode { get; set; } = null!;
+
+    // 데이터 그리드에 표현을하려면 새로운 속성이 필요!!
+    public string PlantName { get; set; }
 
     /// <summary>
     /// 공정계획일
@@ -18,17 +25,17 @@ public partial class Schedule
     public DateOnly SchDate { get; set; }
 
     /// <summary>
-    /// 몇초
+    /// 로드타임(몇초)
     /// </summary>
     public int LoadTime { get; set; }
 
     /// <summary>
-    /// 계획된 시작시간
+    /// 계획 시작시간
     /// </summary>
     public TimeOnly? SchStartTime { get; set; }
 
     /// <summary>
-    /// 계획된 종료시간
+    /// 계획 종료시간
     /// </summary>
     public TimeOnly? SchEndTime { get; set; }
 
@@ -37,17 +44,20 @@ public partial class Schedule
     /// </summary>
     public string? SchFacilityId { get; set; }
 
+    public string? SchFacilityName { get; set; }
+
     /// <summary>
     /// 계획목표수량
     /// </summary>
     public int SchAmount { get; set; }
 
+    /// <summary>
+    /// 작성일
+    /// </summary>
     public DateTime? RegDt { get; set; }
 
     /// <summary>
     /// 수정일
     /// </summary>
     public DateTime? ModDt { get; set; }
-
-    public virtual ICollection<Process> Processes { get; set; } = new List<Process>();
 }
