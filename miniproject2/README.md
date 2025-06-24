@@ -85,7 +85,6 @@ ERD
 
     https://github.com/user-attachments/assets/9f760628-0bd8-48e4-b880-32cb2a312876    
 
-
 5. 선별결과 MQTT로 전달 기능 추가
 
     <img src="../image/mp0005.png" width="600">
@@ -101,7 +100,7 @@ ERD
     - BrokerIP, Topic...
 3. EntityFramework 사용, Database 테이블 모델화(DBFirst)
     ```shell
-    PM> Scaffold-DbContext "Server=localhost;Database=miniproject;Uid=root;Password=12345;Charset=utf8" Pomelo.EntityFrameworkCore.MySql -OutputDir Models -Force -Context IoTDbContext
+    PM> Scaffold-DbContext "Server=localhost;Database=miniproject;Uid=root;Password=*****;Charset=utf8" Pomelo.EntityFrameworkCore.MySql -OutputDir Models -Force -Context IoTDbContext
     ```
 4. config.json 파일, 설정파일 로드 클래스 작업
 5. 구독 결과
@@ -116,16 +115,20 @@ ERD
 3. SettingView.xaml 생성
 4. Helpers.Common 클래스 정적 인스턴스 변수 작성
 5. SettingView 화면 UI 구현
-6. SettingViewModel과 연동 작업
+6. SetttngViewModel과 연동 작업
 7. Model DB 테이블 클래스 가져오기
-8. Setting 관련 DB연동 조회/입력/수정/삭제 기능 구현
+8. Setting 관련, DB연동 조회/입력/수정/삭제 기능 구현
 
 9. ScheduleView, ScheduleViewModel 초기 구현
-    - SettingView.xaml 복사 후 이름 변경. 클래스명 변경
-    - SettingViewModel.cs 복사 후 이름변경, 클래스명 변경
+    - SettingView.xaml 복사 후 이름 변경, 클래스명 변경
+    - SettingViewModel.cs 복사 후 이름 변경, 클래스명 변경
 10. ScheduleView 데이터그리드, 입력양식 수정
 
-11. EntityFrameworkCore
+11. EntityFramework용 패키지 설치
+    - Microsoft.EntityFrameworkCore
+    - Microsoft.EntityFrameworkCore.Tools
+    - Pomelo.EntityFrameworkCore.MySql
+
 
 #### 파이썬 AI + ASP.NET 연동
 - 참조소스
