@@ -5,6 +5,9 @@ namespace WpfMrpSimulatorApp.Models;
 
 public partial class Process
 {
+    /// <summary>
+    /// 공정처리 순번(자동증가)
+    /// </summary>
     public int PrcIdx { get; set; }
 
     public int SchIdx { get; set; }
@@ -15,7 +18,7 @@ public partial class Process
     public string PrcCd { get; set; } = null!;
 
     /// <summary>
-    /// 실제공정처리일
+    /// 실제 공정처리일
     /// </summary>
     public DateOnly PrcDate { get; set; }
 
@@ -30,17 +33,17 @@ public partial class Process
     public TimeOnly? PrcStartTime { get; set; }
 
     /// <summary>
-    /// 실제종료시간
+    /// 실제 종료시간
     /// </summary>
     public TimeOnly? PrcEndTime { get; set; }
 
     /// <summary>
-    /// 실제공정장비아이디
+    /// 실제 공정장비아이디
     /// </summary>
     public string? PrcFacilityId { get; set; }
 
     /// <summary>
-    /// 공정처리 여부(1성공,0실패)
+    /// 공정처리 여부(1성공, 0실패)
     /// </summary>
     public sbyte? PrcResult { get; set; }
 

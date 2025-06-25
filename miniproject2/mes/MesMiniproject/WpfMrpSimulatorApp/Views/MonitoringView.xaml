@@ -29,36 +29,36 @@
         </StackPanel>
         
         <!-- UI구성 공정화면 캔버스 -->
-        <!-- 컨텐츠영역 -->
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
+                <RowDefinition Height="35" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
             <!-- Button 영역 -->
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <mah:NumericUpDown Margin="0,0,5,0"
-                                   mah:TextBoxHelper.AutoWatermark="True"
+                                   mah:TextBoxHelper.AutoWatermark="True" 
                                    mah:TextBoxHelper.Watermark="공정계획순번"
                                    Minimum="1" />
                 <Button Content="Search" Command="{Binding SearchProcessCommand}" Margin="0,0,5,0" />
-                <Button Content="Start" Command="{Binding MoveCommand}" >
+                <Button Content="Start" Command="{Binding StartProcessCommand}">
                     <Button.ContentTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Restart"/>
-                                <Label Content="{Binding}" VerticalAlignment="Center"/>
+                                <iconPacks:PackIconMaterial Kind="Restart" />
+                                <Label Content="{Binding}" VerticalAlignment="Center" />
                             </StackPanel>
                         </DataTemplate>
                     </Button.ContentTemplate>
                 </Button>
+
             </StackPanel>
 
             <!-- HMI(Human Machine Interface) Like -->
             <Canvas Grid.Row="1">
                 <Image Source="/Views/belt.png" Canvas.Bottom="5" Height="100" Canvas.Top="102" Canvas.Left="45" 
-                       HorizontalAlignment="Left" VerticalAlignment="Center"  />
+               HorizontalAlignment="Left" VerticalAlignment="Center"  />
                 <Image x:Name="GearStart" Height="80" Width="80" Source="/Views/gear.png" Canvas.Left="55" Canvas.Top="111" HorizontalAlignment="Left" VerticalAlignment="Center" />
                 <Image x:Name="GearEnd" Height="80" Width="80" Source="/Views/gear.png" Canvas.Right="55" Canvas.Top="111" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Left="454" />
                 <Image x:Name="SortingSensor" Height="45" Width="45" Source="/Views/sensor.png" Canvas.Right="90" Canvas.Left="414" HorizontalAlignment="Left" VerticalAlignment="Center" />
@@ -81,11 +81,11 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Row="0" Grid.Column="0" Content="플랜트명" />
-                <Label Grid.Row="1" Grid.Column="0" Content="고정일자" />
+                <Label Grid.Row="1" Grid.Column="0" Content="공정일자" />
                 <Label Grid.Row="2" Grid.Column="0" Content="로드시간(초)" />
                 <Label Grid.Row="3" Grid.Column="0" Content="설비명" />
                 <Label Grid.Row="4" Grid.Column="0" Content="계획수량" />
@@ -98,7 +98,7 @@
                 <Label Grid.Row="3" Grid.Column="1" Content="창원설비1" />
                 <Label Grid.Row="4" Grid.Column="1" Content="100" />
                 <Label Grid.Row="5" Grid.Column="1" Content="20/3" />
-                <Label Grid.Row="6" Grid.Column="1" Content="86.9" />
+                <Label Grid.Row="6" Grid.Column="1" Content="86.9%" />
             </Grid>
         </GroupBox>
     </Grid>
