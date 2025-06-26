@@ -112,7 +112,7 @@ namespace WpfMrpSimulatorApp.ViewModels
         {
             this.dialogCoordinator = coordinator;  // 파라미터값으로 초기화
 
-            SchIdx = 0; // 최초 1부터 시작
+            SchIdx = 1; // 최초 1부터 시작
 
             // MQTT 초기화
             brokerHost = "210.119.12.83";   // 본인 아이피
