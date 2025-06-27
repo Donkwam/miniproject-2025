@@ -24,7 +24,7 @@ namespace WpfIoTSimulatorApp.Views
             {
                 From = 0,
                 To = 360, // 360도 회전
-                Duration = TimeSpan.FromMilliseconds(50),  // 계획 로드타임(Schedules의 LoadTime 값이 들어가야 함)    
+                Duration = TimeSpan.FromSeconds(2),  // 계획 로드타임(Schedules의 LoadTime 값이 들어가야 함)    
             };
 
             RotateTransform rt = new RotateTransform();
