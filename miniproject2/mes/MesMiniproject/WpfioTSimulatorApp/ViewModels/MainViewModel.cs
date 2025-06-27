@@ -3,7 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using MQTTnet;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using WpfIoTSimulatorApp.Models;
 
@@ -113,6 +115,19 @@ namespace WpfIoTSimulatorApp.ViewModels
 
         private Task MqttMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
         {
+            var payload = Encoding.UTF8.GetString(arg.ApplicationMessage.Payload);
+
+            // Prc 클래스로 Deserialization 처리
+            var data = JsonConvert.DeserializeObject<PrcMsg>(payload);
+
+            // LogText = data.Flag; "on" or "ON"
+            if (data.Flag.ToUpper() == "ON")
+            {
+                Move(); // 이동끝나고 나면
+                Thread.Sleep(2200);
+                Check(); // 
+            }
+
             return Task.CompletedTask;
         }
 
@@ -131,13 +146,19 @@ namespace WpfIoTSimulatorApp.ViewModels
         public void Move()
         {
             ProductBrush = Brushes.Gray;
-            StartHmiRequested?.Invoke();  // 컨베이어벨트 애니메이션 요청(View에서 처리)
+            Application.Current.Dispatcher.Invoke(() => // UI스레드와 Vm스레드간 분리
+            {
+                StartHmiRequested?.Invoke();  // 컨베이어벨트 애니메이션 요청(View에서 처리)
+            });
         }
 
         [RelayCommand]
         public void Check()
         {
-            StartSensorCheckRequested?.Invoke();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                StartSensorCheckRequested?.Invoke();
+            });
             
             // 양품불량품 판단
             Random rand = new();

@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using WpfMrpSimulatorApp.Helpers;
 using WpfMrpSimulatorApp.Models;
@@ -16,6 +15,12 @@ namespace WpfMrpSimulatorApp.ViewModels
 {
     public partial class MonitoringViewModel : ObservableObject
     {
+        #region MQTT 재접속용 변수
+        private Timer _mqttMonitorTimer;
+        private bool _isMqttConnected;
+
+        #endregion
+
         // readonly 생성자에서 할당하고나면 그 이후에 값변경 불가
         private readonly IDialogCoordinator dialogCoordinator;
 
@@ -25,9 +30,14 @@ namespace WpfMrpSimulatorApp.ViewModels
         private string brokerHost;
         private string mqttSubTopic;    // MQTT메시지 받아올때 쓰는 토픽
         private string mqttPubTopic;    // MQTT메시지 보낼때 쓰는 토픽
+        private int logNum;
         private string clientId;      // MQTT 클라이언트 자신의 아이디
 
         #endregion
+
+        // 멤버변수
+        private string _plantCode;          // IoT시뮬레이터로 전달
+        private string _prcFacilityId;      // IoT시뮬레이터로 전달
 
         // 색상표시할 변수
         private Brush _productBrush;
@@ -102,6 +112,8 @@ namespace WpfMrpSimulatorApp.ViewModels
             set => SetProperty(ref _schIdx, value);
         }
 
+        private bool _isReconnecting;
+
         public string LogText
         {
             get => _logText;
@@ -120,7 +132,45 @@ namespace WpfMrpSimulatorApp.ViewModels
             mqttSubTopic = "pknu/sf83/data";
             mqttPubTopic = "pknu/sf83/control";
 
+            logNum = 1;
+
             InitMqttClient();
+
+            StartMqttMonitor();
+        }
+
+        private void StartMqttMonitor()
+        {
+            _mqttMonitorTimer = new Timer(async _ =>
+            {
+                await CheckMqttConnectionAsync();  //
+            }, null, TimeSpan.Zreo, TimeSpan.FromSeconds(10));  // 10초마다 연결여부 확인, 재접속
+        }
+
+        private async Task CheckMqttConnectionAsync()
+        {
+            if (!mqttClient.IsConnected)
+            {
+                _isReconnecting = true;
+                LogText = "MQTT 연결해제. 재접속 중...";
+
+                try
+                {
+                    // MQTT클라이언트 접속 설정
+                    var options = new MqttClientOptionsBuilder()
+                        .WithTcpServer(brokerHost, 1883)
+                        .WithClientId(clientId)
+                        .WithCleanSession(true)
+                        .Build();
+
+                    await mqttClient.ConnectAsync(options);
+                    LogText = "MQTT 재접속 성공!";
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"MQTT 재접속 실패 : {ex.Message}");
+                }
+            }
         }
 
         private async Task InitMqttClient()
@@ -128,20 +178,13 @@ namespace WpfMrpSimulatorApp.ViewModels
             var mqttFactory = new MqttClientFactory();
             mqttClient = mqttFactory.CreateMqttClient();
 
-            // MQTT클라이언트 접속 설정
-            var options = new MqttClientOptionsBuilder()
-                .WithTcpServer(brokerHost, 1883)
-                .WithClientId(clientId)
-                .WithCleanSession(true)
-                .Build();
-
             // mqtt 브로커에 접속
             mqttClient.ConnectedAsync += async e =>
             {
                 LogText = "접속성공";
             };
 
-            await mqttClient.ConnectAsync(options);
+
 
             // 구독
             await mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(mqttSubTopic).Build());
@@ -234,6 +277,10 @@ namespace WpfMrpSimulatorApp.ViewModels
                     SchAmount = Convert.ToInt32(row["schAmount"]);
                     SuccessAmount = FailAmount = 0;
                     SuccessRate = "0.0 %";
+                    // 위에까지는 뷰로 보낼 속성
+                    // 뷰모델 내부에서 쓸 변수
+                    _plantCode = row["plantCode"].ToString();
+                    _prcFacilityId = row["schFacilityId"].ToString();
                 }
                 else
                 {
@@ -245,6 +292,8 @@ namespace WpfMrpSimulatorApp.ViewModels
                     SchAmount = 0;
                     SuccessAmount = FailAmount = 0;
                     SuccessRate = "0.0 %";
+                    _plantCode = string.Empty;
+                    _prcFacilityId = string.Empty;
 
                     return;
                 }
@@ -261,7 +310,16 @@ namespace WpfMrpSimulatorApp.ViewModels
         public async Task StartProcess()
         {
             // MQTT Publish
-            // 테스트 메시지 
+            // 실제 전달 메시지로 변경
+            var payload = new PrcMsg
+            {
+                ClientId = clientId,
+                PlantCode = _plantCode,
+                FacilityId = _prcFacilityId,
+                Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                Flag = "ON"
+            };
+
             var message = new MqttApplicationMessageBuilder()
                                 .WithTopic(mqttPubTopic)
                                 .WithPayload("전달메시지!!")
@@ -269,7 +327,14 @@ namespace WpfMrpSimulatorApp.ViewModels
                                 .Build();
 
             // MQTT 브로커로 전송!
-            await mqttClient.PublishAsync(message);
+            if (mqttClient.IsConnected)
+            {
+                await mqttClient.PublishAsync(message);
+            }
+            else
+            {
+                await this.dialogCoordinator.ShowMessageAsync(this, "오류", "MQTT 브로커에 접속되어 있지 않습니다.");
+            }
 
             ProductBrush = Brushes.Gray;
             StartHmiRequested?.Invoke(); // 컨베이어벨트 애니매이션 요청(view에서 처리)
