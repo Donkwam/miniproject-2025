@@ -58,11 +58,18 @@
 
 - ultralytics : YOLO 이미지, 동영상 객체탐지. 
     - ultralytics 를 먼저 설치하면 Pytorch CPU버전이 설치
+    - YOLO 3까지는 독자적 개발, YOLO 5부터 Ultralytics가 인수
 
 - Pytorch GPU 사용버전 설치(2.9GB)
 
 ```shell
 > pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+```
+
+- ultralytics 설치
+
+```shell
+>pip install ultralytics
 ```
 
 <img src="../image/mp0019.png" width="600">
@@ -72,3 +79,15 @@
 - 웹서버 실행
 
 [소스](./pythonAi/step2/main01.py)
+
+#### 이미지 객체 탐지 앱 추가
+
+- 웹서버 + YOLO객체 탐지
+
+[소스](./pythonAi/step2/main02.py)
+
+#### ASP.NET Core 웹페이지
+
+- 이미지를 AI Server로 전달하고 결과를 돌려받는 웹사이트
+- index.html 작업
+- ASP.NET
