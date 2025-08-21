@@ -1,4 +1,4 @@
-ï»¿namespace ASPWebAPP
+namespace ASPWebApp
 {
     public class Program
     {
@@ -6,20 +6,16 @@
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // HttpClient ë“±ë¡
+            // HttpClient µî·Ï
             builder.Services.AddHttpClient("PythonAiServer", client =>
             {
-                client.BaseAddress = new Uri("http://localhost:8000");
+                client.BaseAddress = new Uri("http://localhost:8000"); 
             });
 
-            // CORS í—ˆìš©(ë¡œì»¬í…ŒìŠ¤íŠ¸ìš©) -> ì‹¤ì œ ìš´ì˜ì‹œëŠ” ì •í™•í•˜ê²Œ ì„¤ì •í•  ê²ƒ
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(policy =>
-                {
-                    policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
+            // CORS Çã¿ë(·ÎÄÃÅ×½ºÆ®¿ë) -> ½ÇÁ¦ ¿î¿µ½Ã´Â Á¤È®ÇÏ°Ô ¼³Á¤ÇÒ°Í
+            builder.Services.AddCors(options => {
+                options.AddDefaultPolicy(policy => {
+                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 });
             });
 
@@ -27,11 +23,11 @@
             var app = builder.Build();
 
             app.UseCors();
-            app.UseDefaultFiles();      // index.html ì²˜ë¦¬
-            app.UseStaticFiles();
-            app.MapControllers();
-            app.MapGet("/", () => "Hello World!");
-
+            app.UseDefaultFiles();      // index.html Ã³¸®
+            app.UseStaticFiles();       // wwwroot Æú´õ ¾Æ·¡ ÆÄÀÏ »ç¿ë¼³Á¤
+            app.MapControllers();       // MVCÁß Controller ¸ÅÇÎ
+            //app.MapGet("/", () => "Hello World!");
+            
             app.Run();
         }
     }
